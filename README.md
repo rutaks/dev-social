@@ -2,7 +2,7 @@
 
 A Simple Social Network For Developers
 
-[![Coverage Status](https://coveralls.io/repos/github/rutaks/dev-social/badge.svg?branch=develop)](https://coveralls.io/github/rutaks/dev-social?branch=develop) [![Coverage Status](https://coveralls.io/repos/github/rutaks/dev-social/badge.svg?branch=develop)](https://coveralls.io/github/rutaks/dev-social?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/8a35fcd2f6f8b0b78a55/maintainability)](https://codeclimate.com/github/rutaks/dev-social/maintainability)
+[![Build Status](https://travis-ci.com/rutaks/dev-social.svg?branch=develop)](https://travis-ci.com/rutaks/dev-social) [![Coverage Status](https://coveralls.io/repos/github/rutaks/dev-social/badge.svg?branch=develop)](https://coveralls.io/github/rutaks/dev-social?branch=develop) [![Maintainability](https://api.codeclimate.com/v1/badges/8a35fcd2f6f8b0b78a55/maintainability)](https://codeclimate.com/github/rutaks/dev-social/maintainability)
 
 
 ---
