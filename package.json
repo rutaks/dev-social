@@ -8,7 +8,11 @@
     "dev": "nodemon --exec babel-node server/app.js",
     "build": "babel -d ./build ./server -s",
     "clean": "rm -rf build && mkdir build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": " nyc --require @babel/polyfill --require @babel/register mocha ./server/test/test.js --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rutaks/dev-social"
   },
   "author": "Samuel Rutakayile",
   "license": "MIT",
@@ -17,10 +21,16 @@
     "@babel/core": "^7.7.5",
     "@babel/node": "^7.7.4",
     "@babel/preset-env": "^7.7.6",
+    "@babel/register": "^7.7.4",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.2",
     "nodemon": "^2.0.2"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.7.0",
     "custom-env": "^1.0.2",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "nyc": "^14.1.1"
   }
 }
