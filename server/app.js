@@ -21,7 +21,7 @@ app.post("/add", (req, res) => {
   Response.send201(res, "success", { sum: sum });
 });
 
-/** Server Run */
+/** Server */
 app.listen(port, () =>
   console.log(`Dev Social is now running on Port: ${port}`)
 );
