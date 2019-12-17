@@ -30,9 +30,14 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.7.0",
+    "@hapi/joi": "^16.1.8",
+    "bcryptjs": "^2.4.3",
     "coveralls": "^3.0.9",
     "custom-env": "^1.0.2",
     "express": "^4.17.1",
+    "gravatar": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.1",
     "nyc": "^14.1.1"
   }
 }
