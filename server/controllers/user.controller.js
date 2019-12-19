@@ -18,17 +18,20 @@ class AuthController {
     const { error, value } = validate.validateUser(req.body);
 
     if (error) {
-      return response.send409(res, error.details[0].message);
+      return response.send400(res, error.details[0].message);
     }
 
-    if (await User.findOne({ email: value.email }))
+    if (await User.findOne({ email: value.email })) {
       return response.send409(res, "User Already Exists");
+    }
+
     try {
       value.avatar = gravatar.generateAvatar(value.email);
       value.password = auth.hashPassword(value.password);
       const user = new User(value);
 
       await user.save();
+
       response.send201(res, "User Successfully Created", {
         user,
         token: auth.generateToken({ email: user.email })
@@ -50,25 +53,24 @@ class AuthController {
   static async login(req, res) {
     const { email, password } = req.body;
     const { error } = validate.validateAccount(email, password);
+
+    if (error) {
+      return response.send400(res, error.details[0].message);
+    }
+
     try {
-      if (error) {
-        response.send404(res, error.details[0].message);
+      let user = await User.findOne({ email });
+
+      if (!user) {
+        return response.send409(res, "Invalid Credentials");
+      }
+      let isValidPwd = auth.isValidPassword(password, user.password);
+      if (isValidPwd) {
+        response.send200(res, "Login Successful", {
+          token: auth.generateToken({ email: user.email })
+        });
       } else {
-        let user = await User.findOne({ email }).exec();
-        if (user) {
-          /* istanbul ignore next */
-          let check = auth.isValidPassword(password, user.password);
-          /* istanbul ignore next */
-          check
-            ? response.send200(res, "Login Successful", {
-                token: auth.generateToken({
-                  email: user.email
-                })
-              })
-            : response.send409(res, "Invalid Credentials");
-        } else {
-          response.send409(res, "Invalid Credentials");
-        }
+        response.send409(res, "Invalid Credentials");
       }
     } catch (err) {
       throw err;

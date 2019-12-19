@@ -8,7 +8,7 @@
     "dev": "nodemon --exec babel-node server/app.js",
     "build": "babel -d ./build ./server -s",
     "clean": "rm -rf build && mkdir build",
-    "test": "nyc --reporter=html --reporter=text mocha --require @babel/polyfill --require @babel/register ./server/test/auth_test.js --exit",
+    "test": "nyc --reporter=html --reporter=text mocha --require @babel/polyfill --require @babel/register ./server/test/auth.test.js ./server/test/post.test.js --exit",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -43,6 +43,7 @@
     "custom-env": "^1.0.2",
     "express": "^4.17.1",
     "express-pino-logger": "^4.0.0",
+    "express-response-handler": "^1.4.1",
     "express-validator": "^6.3.0",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",

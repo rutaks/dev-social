@@ -42,6 +42,18 @@ describe("Auth", function() {
       });
   });
 
+  // it("should not allow user to create account on account is already existing", function(done) {
+  //   chai
+  //     .request(app)
+  //     .post("/api/v1/auth/signup")
+  //     .send(user)
+  //     .end(function(err, res) {
+  //       res.should.have.status(409);
+  //       res.body.should.have.property("message", "User Successfully Created");
+  //       done();
+  //     });
+  // });
+
   it("should login user", function(done) {
     chai
       .request(app)
@@ -72,7 +84,7 @@ describe("Auth", function() {
       .post("/api/v1/auth/signin")
       .send(account2)
       .end(function(err, res) {
-        res.should.have.status(409);
+        res.should.have.status(400);
         res.body.should.have.property("error", '"email" must be a valid email');
         done();
       });
@@ -84,7 +96,7 @@ describe("Auth", function() {
       .post("/api/v1/auth/signin")
       .send(account3)
       .end(function(err, res) {
-        res.should.have.status(409);
+        res.should.have.status(400);
         done();
       });
   });
