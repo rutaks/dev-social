@@ -1,9 +1,7 @@
 class Response {
-  /* istanbul ignore next */
   static send200(res, msg, val) {
     /* istanbul ignore next */
     const value = typeof val === "undefined" ? "" : val;
-    /* istanbul ignore next */
     return res.status(200).json({
       status: 200,
       message: msg,
@@ -18,17 +16,39 @@ class Response {
     });
   }
 
+  static send401(res, error) {
+    /* istanbul ignore next */
+    return res.status(401).json({
+      status: 401,
+      error: error
+    });
+  }
+
+  static send400(res, error) {
+    return res.status(400).json({
+      status: 400,
+      error: error
+    });
+  }
+
   static send404(res, error) {
+    /* istanbul ignore next */
+    return res.status(404).json({
+      status: 404,
+      error: error
+    });
+  }
+
+  static send409(res, error) {
     return res.status(409).json({
       status: 409,
       error: error
     });
   }
-  /* istanbul ignore next */
-  static send409(res, error) {
-    /* istanbul ignore next */
-    return res.status(409).json({
-      status: 409,
+
+  static send500(res, error) {
+    return res.status(500).json({
+      status: 500,
       error: error
     });
   }
