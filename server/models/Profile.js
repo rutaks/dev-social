@@ -1,5 +1,27 @@
 import mongoose from "mongoose";
 
+const stringRequired = {
+  type: String,
+  required: true
+};
+
+const details = {
+  from: {
+    type: Date,
+    required: true
+  },
+  to: {
+    type: Date
+  },
+  current: {
+    type: Boolean,
+    default: false
+  },
+  description: {
+    type: String
+  }
+};
+
 const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,62 +51,18 @@ const ProfileSchema = new mongoose.Schema({
   },
   experience: [
     {
-      title: {
-        type: String,
-        required: true
-      },
-      company: {
-        type: String,
-        required: true
-      },
-      location: {
-        type: String,
-        required: true
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date
-      },
-      current: {
-        type: Boolean,
-        default: false
-      },
-      description: {
-        type: String
-      }
+      title: stringRequired,
+      company: stringRequired,
+      location: stringRequired,
+      details: details
     }
   ],
   education: [
     {
-      school: {
-        type: String,
-        required: true
-      },
-      degree: {
-        type: String,
-        required: true
-      },
-      studyfield: {
-        type: String,
-        required: true
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date
-      },
-      current: {
-        type: Boolean,
-        default: false
-      },
-      description: {
-        type: String
-      }
+      school: stringRequired,
+      degree: stringRequired,
+      studyfield: stringRequired,
+      details: details
     }
   ],
   social: {
