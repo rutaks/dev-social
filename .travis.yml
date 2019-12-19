@@ -1,6 +1,11 @@
 language: node_js
 node_js:
   - "stable"
+services: mongodb
+before_script:
+  - sleep 15
+  - mongo test --eval
+cache: npm
 script:
   - npm run test
 after_success:
