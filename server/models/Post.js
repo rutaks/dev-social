@@ -1,17 +1,27 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
+const stringRequired = {
+  type: String,
+  required: true
+};
 
 const PostSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users"
   },
-  text: {
-    type: String,
-    required: true
-  },
-  name: {
+  title: stringRequired,
+  body: stringRequired,
+  category: {
     type: String
   },
+  firstname: {
+    type: String
+  },
+  lastname: {
+    type: String
+  },
+
   avatar: {
     type: String
   },

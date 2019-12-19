@@ -18,7 +18,7 @@ class AuthController {
     const { error, value } = validate.validateUser(req.body);
 
     if (error) {
-      return response.send409(res, error.details[0].message);
+      return response.send400(res, error.details[0].message);
     }
 
     if (await User.findOne({ email: value.email })) {
@@ -55,7 +55,7 @@ class AuthController {
     const { error } = validate.validateAccount(email, password);
 
     if (error) {
-      return response.send404(res, error.details[0].message);
+      return response.send400(res, error.details[0].message);
     }
 
     try {
