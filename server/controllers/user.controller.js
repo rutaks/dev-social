@@ -20,6 +20,9 @@ class AuthController {
     if (error) {
       return response.send409(res, error.details[0].message);
     }
+
+    if (await User.findOne({ email: value.email }))
+      return response.send409(res, "User Already Exists");
     try {
       value.avatar = gravatar.generateAvatar(value.email);
       value.password = auth.hashPassword(value.password);
