@@ -169,6 +169,23 @@ describe("Posts", function() {
     });
   });
 
+  it("should not remove post if post not found", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    const fakePostId = "5dfc93be2fdffe12049f6ffe";
+    user.save().then(res => {
+      chai
+        .request(app)
+        .delete(`/api/v1/posts/${fakePostId}`)
+        .set("authorization", `Bearer ${tempToken}`)
+        .end(function(err, res) {
+          res.should.have.status(404);
+          res.body.should.have.property("error", "Post not found");
+          done();
+        });
+    });
+  });
+
   it("should not remove post if user is not owner", function(done) {
     let tempUser1 = new User(user3);
     let tempUser2 = new User(user1);
@@ -182,6 +199,60 @@ describe("Posts", function() {
             .request(app)
             .delete(`/api/v1/posts/${res._id}`)
             .set("authorization", `Bearer ${token}`)
+            .end(function(err, res) {
+              res.should.have.status(401);
+              res.body.should.have.property("error", "User not authorized");
+              done();
+            });
+        });
+      });
+    });
+  });
+
+  it("should modify post if user is owner", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(res => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.save().then(res => {
+        newPost.title = "test 2";
+        newPost.body = "body test 2";
+        newPost.category = "Cat Test";
+        chai
+          .request(app)
+          .put(`/api/v1/posts/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .send(newPost)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property(
+              "message",
+              "Post modified successfully"
+            );
+            done();
+          });
+      });
+    });
+  });
+
+  it("should not modify post if user is not owner", function(done) {
+    let tempUser1 = new User(user3);
+    let tempUser2 = new User(user1);
+    const tempToken = auth.generateToken({ email: tempUser2.email });
+    tempUser2.save().then(res1 => {
+      tempUser1.save().then(res2 => {
+        let newPost = new Post(post1);
+        newPost.user = tempUser1.id;
+        newPost.save().then(res => {
+          newPost.title = "test 2";
+          newPost.body = "body test 2";
+          newPost.category = "Cat Test";
+          chai
+            .request(app)
+            .put(`/api/v1/posts/${res._id}`)
+            .set("authorization", `Bearer ${token}`)
+            .send(newPost)
             .end(function(err, res) {
               res.should.have.status(401);
               res.body.should.have.property("error", "User not authorized");
