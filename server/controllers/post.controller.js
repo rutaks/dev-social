@@ -2,6 +2,7 @@ import response from "../util/response";
 import validator from "../util/validators/validator";
 import User from "../models/User";
 import Post from "../models/Post";
+import Auth from "../util/auth";
 
 class PostController {
   static async getAllPosts(req, res) {
@@ -68,29 +69,48 @@ class PostController {
     }
   }
 
-  static async removePost(req, res) {
+  static async modifyPost(req, res) {
     const id = req.params.id;
-    const email = req.decoded.email;
+    const { title, body, category } = req.body;
+    const { error } = validator.validatePost({ title, body, category });
+
+    if (error) {
+      return response.send400(res, error.details[0].message);
+    }
 
     try {
       if (!id.match(/^[0-9a-fA-F]{24}$/)) {
         return response.send404(res, "Invalid ID");
       }
 
-      const post = await Post.findById(id);
-      const user = await User.findOne({ email: email }).select("-password");
+      const post = await Auth.getAuthPost(req, res, id);
 
-      if (!post) {
-        return response.send404(res, "Post not found");
+      if (post) {
+        post.title = title;
+        post.body = body;
+        post.category = category;
+
+        await post.save();
+        return response.send200(res, "Post modified successfully");
       }
-
-      if (post.user.toString() !== user.id) {
-        return response.send401(res, "User not authorized");
+    } catch (err) {
+      /* istanbul ignore next */
+      response.send500(res, "Internal Server Error, Try Again Later");
+      throw err;
+    }
+  }
+  static async removePost(req, res) {
+    const id = req.params.id;
+    try {
+      if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        return response.send404(res, "Invalid ID");
       }
+      const post = await Auth.getAuthPost(req, res, id);
 
-      await post.remove();
-
-      return response.send200(res, "Post removed successfully");
+      if (post) {
+        await post.remove();
+        return response.send200(res, "Post removed successfully");
+      }
     } catch (err) {
       /* istanbul ignore next */
       response.send500(res, "Internal Server Error, Try Again Later");
