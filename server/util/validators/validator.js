@@ -44,7 +44,7 @@ class Validator {
       title: Joi.string().required(),
       body: Joi.string().required(),
       category: Joi.string().required()
-    });
+    }).unknown(true);
     return postSchema.validate(post);
   }
 }

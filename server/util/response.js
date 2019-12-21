@@ -16,17 +16,16 @@ class Response {
     });
   }
 
-  static send401(res, error) {
-    /* istanbul ignore next */
-    return res.status(401).json({
-      status: 401,
+  static send400(res, error) {
+    return res.status(400).json({
+      status: 400,
       error: error
     });
   }
 
-  static send400(res, error) {
-    return res.status(400).json({
-      status: 400,
+  static send401(res, error) {
+    return res.status(401).json({
+      status: 401,
       error: error
     });
   }
