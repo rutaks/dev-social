@@ -24,6 +24,7 @@ const isLoggedIn = async (req, res, next) => {
       }
     });
   } catch (error) {
+    /* istanbul ignore next */
     response.send500(res, "Something Happened, Please Try Again Later ");
     throw error;
   }
