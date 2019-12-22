@@ -350,4 +350,65 @@ describe("Posts", function() {
       });
     });
   });
+
+  it("should comment post if user identified & post found", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.save().then(res => {
+        chai
+          .request(app)
+          .put(`/api/v1/posts/comment/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .send({ comment: "test comment" })
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property(
+              "message",
+              "Commented post successfully"
+            );
+            done();
+          });
+      });
+    });
+  });
+
+  it("should uncomment post if user identified, post found & comment found", function(done) {
+    let user = new User(user3);
+    const comment = "test comment";
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      const newComment = {
+        text: comment,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        avatar: user.avatar,
+        user: user.id
+      };
+      newPost.comments.unshift(newComment);
+      newPost.likes.unshift({ user: user.id });
+      newPost.save().then(res => {
+        const foundComment = res.comments.find(
+          commentItem => commentItem.text == comment
+        );
+
+        chai
+          .request(app)
+          .delete(`/api/v1/posts/comment/${res._id}/${foundComment.id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property(
+              "message",
+              "Uncommented post successfully"
+            );
+            done();
+          });
+      });
+    });
+  });
 });
