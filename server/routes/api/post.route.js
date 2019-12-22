@@ -41,10 +41,26 @@ router.put("/:id", isLoggedIn, PostController.modifyPost);
  */
 router.put("/like/:id", isLoggedIn, PostController.likePost);
 /**
- * Route liking specific post by id  {PUT}
+ * Route unliking specific post by id  {PUT}
  * @name /api/v1/posts/unlike/:id
  * @param {string} path - Express path
  */
 router.put("/unlike/:id", isLoggedIn, PostController.unlikePost);
+/**
+ * Route commenting specific post by id  {PUT}
+ * @name /api/v1/posts/comment/:id
+ * @param {string} path - Express path
+ */
+router.put("/comment/:id", isLoggedIn, PostController.commentPost);
+/**
+ * Route uncommenting specific post by id  {PUT}
+ * @name /api/v1/posts/comment/:id/:comment_id
+ * @param {string} path - Express path
+ */
+router.delete(
+  "/comment/:id/:comment",
+  isLoggedIn,
+  PostController.uncommentPost
+);
 
 export default router;

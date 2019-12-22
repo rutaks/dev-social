@@ -125,9 +125,7 @@ class PostController {
     try {
       const post = await Post.findById(id);
       const user = await User.findOne({ email: userEmail }).select("-password");
-      if (
-        post.likes.filter(like => like.user.toString() === user.id).length > 0
-      ) {
+      if (foundLike(post, user) > 0) {
         return response.send400(res, "Post already liked");
       }
       post.likes.unshift({ user: user.id });
@@ -148,9 +146,7 @@ class PostController {
     try {
       const post = await Post.findById(id);
       const user = await User.findOne({ email: userEmail }).select("-password");
-      if (
-        post.likes.filter(like => like.user.toString() === user.id).length === 0
-      ) {
+      if (foundLike(post, user) === 0) {
         return response.send400(res, "Post hasn't been liked yet");
       }
       const removeIndex = post.likes
@@ -167,6 +163,71 @@ class PostController {
       throw err;
     }
   }
+  static async commentPost(req, res) {
+    const id = req.params.id;
+    const userEmail = req.decoded.email;
+    const { comment } = req.body;
+
+    if (!comment) {
+      return response.send400(res, "Invalid comment");
+    }
+
+    try {
+      const post = await Post.findById(id);
+      const user = await User.findOne({ email: userEmail }).select("-password");
+
+      const newComment = {
+        text: comment,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        avatar: user.avatar,
+        user: user.id
+      };
+      post.comments.unshift(newComment);
+      await post.save();
+      response.send200(res, "Commented post successfully", post.comments);
+    } catch (err) {
+      /* istanbul ignore next */
+      response.send500(res, "Internal Server Error, Try Again Later");
+      throw err;
+    }
+  }
+
+  static async uncommentPost(req, res) {
+    const id = req.params.id;
+    const commentId = req.params.comment;
+    const userEmail = req.decoded.email;
+    try {
+      const post = await Post.findById(id);
+      const user = await User.findOne({ email: userEmail }).select("-password");
+
+      const comment = post.comments.find(comment => comment.id === commentId);
+
+      if (!comment) {
+        return response.send404(res, "Comment does not exist");
+      }
+
+      if (comment.user.toString() !== user.id) {
+        return response.send401(res, "User not authorized");
+      }
+
+      const removeIndex = post.comments
+        .map(comment => comment.id)
+        .indexOf(commentId);
+      post.comments.splice(removeIndex, 1);
+
+      await post.save();
+
+      response.send200(res, "Uncommented post successfully", post.likes);
+    } catch (err) {
+      /* istanbul ignore next */
+      response.send500(res, "Internal Server Error, Try Again Later");
+      throw err;
+    }
+  }
 }
+
+const foundLike = (post, user) =>
+  post.likes.filter(like => like.user.toString() === user.id).length;
 
 export default PostController;
