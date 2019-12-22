@@ -5,6 +5,11 @@ const stringRequired = {
   required: true
 };
 
+const userField = {
+  type: Schema.Types.ObjectId,
+  ref: "users"
+};
+
 const PostSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
@@ -27,10 +32,12 @@ const PostSchema = new mongoose.Schema({
   },
   likes: [
     {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "users"
-      },
+      user: userField
+    }
+  ],
+  comments: [
+    {
+      user: userField,
       text: {
         type: String,
         required: true

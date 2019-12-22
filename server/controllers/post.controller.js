@@ -99,6 +99,7 @@ class PostController {
       throw err;
     }
   }
+
   static async removePost(req, res) {
     const id = req.params.id;
     try {
@@ -111,6 +112,55 @@ class PostController {
         await post.remove();
         return response.send200(res, "Post removed successfully");
       }
+    } catch (err) {
+      /* istanbul ignore next */
+      response.send500(res, "Internal Server Error, Try Again Later");
+      throw err;
+    }
+  }
+
+  static async likePost(req, res) {
+    const id = req.params.id;
+    const userEmail = req.decoded.email;
+    try {
+      const post = await Post.findById(id);
+      const user = await User.findOne({ email: userEmail }).select("-password");
+      if (
+        post.likes.filter(like => like.user.toString() === user.id).length > 0
+      ) {
+        return response.send400(res, "Post already liked");
+      }
+      post.likes.unshift({ user: user.id });
+
+      await post.save();
+      response.send200(res, "Liked post successfully", post.likes);
+    } catch (err) {
+      /* istanbul ignore next */
+      response.send500(res, "Internal Server Error, Try Again Later");
+      throw err;
+    }
+  }
+
+  static async unlikePost(req, res) {
+    const id = req.params.id;
+    const userEmail = req.decoded.email;
+
+    try {
+      const post = await Post.findById(id);
+      const user = await User.findOne({ email: userEmail }).select("-password");
+      if (
+        post.likes.filter(like => like.user.toString() === user.id).length === 0
+      ) {
+        return response.send400(res, "Post hasn't been liked yet");
+      }
+      const removeIndex = post.likes
+        .map(like => like.user.toString())
+        .indexOf(user.id);
+
+      post.likes.splice(removeIndex, 1);
+
+      await post.save();
+      response.send200(res, "Unliked post successfully", post.likes);
     } catch (err) {
       /* istanbul ignore next */
       response.send500(res, "Internal Server Error, Try Again Later");
