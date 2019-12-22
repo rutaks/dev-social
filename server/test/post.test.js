@@ -262,4 +262,92 @@ describe("Posts", function() {
       });
     });
   });
+
+  it("should like post if user identified & post found", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.save().then(res => {
+        chai
+          .request(app)
+          .put(`/api/v1/posts/like/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property("message", "Liked post successfully");
+            done();
+          });
+      });
+    });
+  });
+
+  it("should not like post if user already liked post", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.likes.unshift({ user: user.id });
+      newPost.save().then(res => {
+        chai
+          .request(app)
+          .put(`/api/v1/posts/like/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .end(function(err, res) {
+            res.should.have.status(400);
+            res.body.should.have.property("error", "Post already liked");
+            done();
+          });
+      });
+    });
+  });
+
+  it("should unlike post if user identified & post found", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.likes.unshift({ user: user.id });
+      newPost.save().then(res => {
+        chai
+          .request(app)
+          .put(`/api/v1/posts/unlike/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .end(function(err, res) {
+            res.should.have.status(200);
+            res.body.should.have.property(
+              "message",
+              "Unliked post successfully"
+            );
+            done();
+          });
+      });
+    });
+  });
+
+  it("should not unlike post if user has not yet unliked post", function(done) {
+    let user = new User(user3);
+    const tempToken = auth.generateToken({ email: user.email });
+    user.save().then(savedUser => {
+      let newPost = new Post(post1);
+      newPost.user = user.id;
+      newPost.save().then(res => {
+        chai
+          .request(app)
+          .put(`/api/v1/posts/unlike/${res._id}`)
+          .set("authorization", `Bearer ${tempToken}`)
+          .end(function(err, res) {
+            res.should.have.status(400);
+            res.body.should.have.property(
+              "error",
+              "Post hasn't been liked yet"
+            );
+            done();
+          });
+      });
+    });
+  });
 });
