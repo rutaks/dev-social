@@ -34,5 +34,17 @@ router.delete("/:id", isLoggedIn, PostController.removePost);
  * @param {string} path - Express path
  */
 router.put("/:id", isLoggedIn, PostController.modifyPost);
+/**
+ * Route liking specific post by id  {PUT}
+ * @name /api/v1/posts/like/:id
+ * @param {string} path - Express path
+ */
+router.put("/like/:id", isLoggedIn, PostController.likePost);
+/**
+ * Route liking specific post by id  {PUT}
+ * @name /api/v1/posts/unlike/:id
+ * @param {string} path - Express path
+ */
+router.put("/unlike/:id", isLoggedIn, PostController.unlikePost);
 
 export default router;
