@@ -4,6 +4,9 @@ import User from "../models/User";
 import Post from "../models/Post";
 import Auth from "../util/auth";
 
+const foundLike = (post, user) =>
+  post.likes.filter(like => like.user.toString() === user.id).length;
+
 class PostController {
   static async getAllPosts(req, res) {
     try {
@@ -125,9 +128,7 @@ class PostController {
     try {
       const post = await Post.findById(id);
       const user = await User.findOne({ email: userEmail }).select("-password");
-      if (
-        post.likes.filter(like => like.user.toString() === user.id).length > 0
-      ) {
+      if (foundLike(post, user) > 0) {
         return response.send400(res, "Post already liked");
       }
       post.likes.unshift({ user: user.id });
@@ -148,9 +149,7 @@ class PostController {
     try {
       const post = await Post.findById(id);
       const user = await User.findOne({ email: userEmail }).select("-password");
-      if (
-        post.likes.filter(like => like.user.toString() === user.id).length === 0
-      ) {
+      if (foundLike(post, user) === 0) {
         return response.send400(res, "Post hasn't been liked yet");
       }
       const removeIndex = post.likes
