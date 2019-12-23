@@ -47,6 +47,14 @@ class Validator {
     }).unknown(true);
     return postSchema.validate(post);
   }
+
+  static validateProfile(profile) {
+    let profileSchema = Joi.object({
+      skills: Joi.array().required(),
+      status: Joi.string().required()
+    }).unknown(true);
+    return profileSchema.validate(profile);
+  }
 }
 
 export default Validator;
