@@ -4,6 +4,23 @@ import response from "../util/response";
 import validator from "../util/validators/validator";
 import Post from "../models/Post";
 
+const assignProfileFields = (req, user) => {
+  const profileFields = {};
+  profileFields.user = user.id;
+  if (req.body.company) profileFields.company = req.body.company;
+  if (req.body.website) profileFields.website = req.body.website;
+  if (req.body.location) profileFields.location = req.body.location;
+  if (req.body.bio) profileFields.bio = req.body.bio;
+  if (req.body.githubusername)
+    profileFields.githubusername = req.body.githubusername;
+  profileFields.social = {};
+  if (req.body.youtube) profileFields.social.youtube = req.body.youtube;
+  if (req.body.twitter) profileFields.social.twitter = req.body.twitter;
+  if (req.body.facebook) profileFields.social.facebook = req.body.facebook;
+  if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
+  if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
+  return profileFields;
+};
 class ProfileController {
   static async getProfiles(req, res) {
     try {
@@ -64,42 +81,15 @@ class ProfileController {
 
   static async updateProfile(req, res) {
     const userEmail = req.decoded.email;
-    const { error } = validator.validateProfile(req.body);
+    const { error, value } = validator.validateProfile(req.body);
     if (error) {
       return response.send400(res, error.details[0].message);
     }
     const user = await User.findOne({ email: userEmail });
-    const {
-      company,
-      website,
-      location,
-      bio,
-      status,
-      githubusername,
-      skills,
-      youtube,
-      facebook,
-      twitter,
-      instagram,
-      linkedin
-    } = req.body;
+    const profileFields = assignProfileFields(req, user);
 
-    const profileFields = {};
-    profileFields.user = user.id;
-    if (company) profileFields.company = company;
-    if (website) profileFields.website = website;
-    if (location) profileFields.location = location;
-    if (bio) profileFields.bio = bio;
-    if (githubusername) profileFields.githubusername = githubusername;
-    profileFields.status = status;
-    profileFields.skills = skills;
-
-    profileFields.social = {};
-    if (youtube) profileFields.social.youtube = youtube;
-    if (twitter) profileFields.social.twitter = twitter;
-    if (facebook) profileFields.social.facebook = facebook;
-    if (linkedin) profileFields.social.linkedin = linkedin;
-    if (instagram) profileFields.social.instagram = instagram;
+    profileFields.status = value.status;
+    profileFields.skills = value.skills;
 
     try {
       let profile = await Profile.findOneAndUpdate(
