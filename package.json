@@ -8,7 +8,7 @@
     "dev": "nodemon --exec babel-node server/app.js",
     "build": "babel -d ./build ./server -s",
     "clean": "rm -rf build && mkdir build",
-    "test": "nyc --reporter=html --reporter=text mocha --require @babel/polyfill --require @babel/register ./server/test/auth.test.js ./server/test/post.test.js --exit",
+    "test": "nyc --reporter=html --reporter=text mocha --require @babel/polyfill --require @babel/register ./server/test/auth.test.js ./server/test/post.test.js ./server/test/profile.test.js --exit",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
