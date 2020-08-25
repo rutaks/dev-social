@@ -6,7 +6,7 @@ import Post from "../models/Post";
 
 class Auth {
   static generateToken(user) {
-    return jwt.sign(user, process.env.SECRET);
+    return jwt.sign(user, "test123");
   }
 
   static isValidPassword(password, hashedPassword) {

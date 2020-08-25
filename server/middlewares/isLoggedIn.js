@@ -15,7 +15,7 @@ const isLoggedIn = async (req, res, next) => {
       response.send401(res, "Malformed Token");
     }
 
-    jwt.verify(token, process.env.SECRET, (error, decoded) => {
+    jwt.verify(token, "test123", (error, decoded) => {
       if (error) {
         response.send401(res, "Invalid Token");
       } else {

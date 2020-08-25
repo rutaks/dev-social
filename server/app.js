@@ -14,7 +14,8 @@ env.env();
 
 /** Variable Definitions */
 const app = express();
-const port = process.env.PORT;
+// const port = process.env.PORT;
+const port = 3000;
 
 /** Middleware Config */
 app.use(logger("dev"));
